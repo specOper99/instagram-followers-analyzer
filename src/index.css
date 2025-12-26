@@ -1,0 +1,26 @@
+html,
+body {
+  height: 100%;
+}
+
+:root {
+  --app-surface: color-mix(in srgb, var(--mantine-color-body), var(--mantine-color-white) 6%);
+  --app-surface-strong: color-mix(in srgb, var(--mantine-color-body), var(--mantine-color-white) 10%);
+  --app-border: color-mix(in srgb, var(--mantine-color-gray-4), transparent 45%);
+}
+
+:where([data-mantine-color-scheme='dark']) {
+  --app-surface: color-mix(in srgb, var(--mantine-color-body), var(--mantine-color-dark-9) 18%);
+  --app-surface-strong: color-mix(in srgb, var(--mantine-color-body), var(--mantine-color-dark-9) 26%);
+  --app-border: color-mix(in srgb, var(--mantine-color-dark-4), transparent 35%);
+}
+
+body {
+  margin: 0;
+  background-color: var(--mantine-color-body);
+  background-image: none;
+}
+
+#root {
+  min-height: 100%;
+}
