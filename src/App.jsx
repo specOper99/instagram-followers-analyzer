@@ -40,6 +40,7 @@ import {
   IconUsersGroup,
 } from "@tabler/icons-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 import {
   createT,
@@ -561,6 +562,7 @@ export default function App() {
             forceColorScheme={forcedScheme}
             theme={appTheme}
         >
+            <Analytics />
             <DirectionProvider dir={isRtl ? "rtl" : "ltr"}>
                 <Box
                     component="header"
