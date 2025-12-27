@@ -1,61 +1,62 @@
 import {
-  ActionIcon,
-  Badge,
-  Box,
-  Button,
-  Card,
-  Checkbox,
-  Container,
-  DirectionProvider,
-  Group,
-  List,
-  MantineProvider,
-  Menu,
-  Paper,
-  SegmentedControl,
-  Select,
-  SimpleGrid,
-  Stack,
-  Text,
-  Textarea,
-  TextInput,
-  ThemeIcon,
-  Title,
+    ActionIcon,
+    Badge,
+    Box,
+    Button,
+    Card,
+    Checkbox,
+    Container,
+    DirectionProvider,
+    Group,
+    List,
+    MantineProvider,
+    Menu,
+    Paper,
+    SegmentedControl,
+    Select,
+    SimpleGrid,
+    Stack,
+    Text,
+    Textarea,
+    TextInput,
+    ThemeIcon,
+    Title,
 } from "@mantine/core";
 import { useColorScheme, useLocalStorage } from "@mantine/hooks";
 import {
-  IconBolt,
-  IconCheck,
-  IconCopy,
-  IconDeviceDesktop,
-  IconDownload,
-  IconExternalLink,
-  IconLanguage,
-  IconMoonStars,
-  IconSun,
-  IconUserCheck,
-  IconUserMinus,
-  IconUserPlus,
-  IconUsers,
-  IconUsersGroup,
+    IconBolt,
+    IconCheck,
+    IconCopy,
+    IconDeviceDesktop,
+    IconDownload,
+    IconExternalLink,
+    IconLanguage,
+    IconLock,
+    IconMoonStars,
+    IconShieldCheck,
+    IconSun,
+    IconUserCheck,
+    IconUserMinus,
+    IconUserPlus,
+    IconUsers,
+    IconUsersGroup,
+    IconWifiOff,
 } from "@tabler/icons-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Analytics } from "@vercel/analytics/react";
-
 import {
-  createT,
-  getInitialLang,
-  LANG_OPTIONS,
-  RTL_LANGS,
-  THEME_OPTIONS,
+    createT,
+    getInitialLang,
+    LANG_OPTIONS,
+    RTL_LANGS,
+    THEME_OPTIONS,
 } from "./i18n";
 import {
-  computeLists,
-  dedupePreserveOrderBy,
-  instagramProfileUrl,
-  normalizeUsername,
-  pickExportFilesFromAnySelection,
-  readJsonFileWithMeta,
+    computeLists,
+    dedupePreserveOrderBy,
+    instagramProfileUrl,
+    normalizeUsername,
+    pickExportFilesFromAnySelection,
+    readJsonFileWithMeta,
 } from "./lib/instagram";
 import { appTheme } from "./theme";
 
@@ -105,6 +106,66 @@ function baseLabelForKey(t, key) {
     return String(key || "");
 }
 
+function LandingPage({ t, onStart }) {
+    return (
+        <Container size="sm" py={80}>
+            <Stack align="center" gap="xl">
+                <ThemeIcon size={80} radius={100} variant="light" color="blue">
+                    <IconShieldCheck size={48} />
+                </ThemeIcon>
+
+                <Stack align="center" gap="xs">
+                    <Title order={1} ta="center" fw={900} size={42}>
+                        {t("landingTitle")}
+                    </Title>
+                    <Text c="dimmed" ta="center" size="lg" maw={500}>
+                        {t("landingDescription")}
+                    </Text>
+                </Stack>
+
+                <Paper withBorder p="xl" radius="md" bg="var(--mantine-color-blue-light)">
+                    <Group wrap="nowrap" align="flex-start">
+                        <ThemeIcon variant="white" color="blue" radius="md">
+                            <IconWifiOff size={20} />
+                        </ThemeIcon>
+                        <Text size="sm" fw={500}>
+                            {t("landingOfflineTip")}
+                        </Text>
+                    </Group>
+                </Paper>
+
+                <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md" w="100%">
+                    <Paper withBorder p="md" radius="md">
+                        <Stack align="center" gap="xs">
+                            <IconLock size={24} color="var(--mantine-color-blue-6)" />
+                            <Text fw={700} size="sm">{t("landingPrivateTitle")}</Text>
+                            <Text size="xs" c="dimmed" ta="center">{t("landingPrivateDesc")}</Text>
+                        </Stack>
+                    </Paper>
+                    <Paper withBorder p="md" radius="md">
+                        <Stack align="center" gap="xs">
+                            <IconWifiOff size={24} color="var(--mantine-color-blue-6)" />
+                            <Text fw={700} size="sm">{t("landingOfflineTitle")}</Text>
+                            <Text size="xs" c="dimmed" ta="center">{t("landingOfflineDesc")}</Text>
+                        </Stack>
+                    </Paper>
+                    <Paper withBorder p="md" radius="md">
+                        <Stack align="center" gap="xs">
+                            <IconShieldCheck size={24} color="var(--mantine-color-blue-6)" />
+                            <Text fw={700} size="sm">{t("landingSecureTitle")}</Text>
+                            <Text size="xs" c="dimmed" ta="center">{t("landingSecureDesc")}</Text>
+                        </Stack>
+                    </Paper>
+                </SimpleGrid>
+
+                <Button size="xl" radius="md" onClick={onStart} fullWidth maw={300}>
+                    {t("landingStartBtn")}
+                </Button>
+            </Stack>
+        </Container>
+    );
+}
+
 export default function App() {
     const systemScheme = useColorScheme();
 
@@ -150,6 +211,10 @@ export default function App() {
     const [viewMode, setViewMode] = useState("cards");
     const [busy, setBusy] = useState(false);
     const [pickMode, setPickMode] = useState("folder");
+    const [showLanding, setShowLanding] = useLocalStorage({
+        key: "ig_follow_diff_show_landing",
+        defaultValue: true,
+    });
 
     const folderInputRef = useRef(null);
     const followersInputRef = useRef(null);
@@ -562,7 +627,6 @@ export default function App() {
             forceColorScheme={forcedScheme}
             theme={appTheme}
         >
-            <Analytics />
             <DirectionProvider dir={isRtl ? "rtl" : "ltr"}>
                 <Box
                     component="header"
@@ -610,6 +674,14 @@ export default function App() {
                                         >
                                             {t("appTitle")}
                                         </Title>
+                                        <Badge
+                                            variant="light"
+                                            color="green"
+                                            leftSection={<IconShieldCheck size={12} />}
+                                            visibleFrom="xs"
+                                        >
+                                            {t("badgeNoUpload")}
+                                        </Badge>
                                     </Group>
                                 </Stack>
                             </Group>
@@ -750,33 +822,36 @@ export default function App() {
                     </Container>
                 </Box>
 
-                <Container size="lg" py="xl" dir={isRtl ? "rtl" : "ltr"}>
-                    <Stack gap="md">
-                        <Card withBorder radius="lg" p="lg">
-                            <Stack gap="sm">
-                                <Title order={4}>{t("aboutTitle")}</Title>
-                                <Text>{t("aboutLead")}</Text>
-                                <Paper withBorder radius="md" p="sm">
-                                    <Stack gap={6}>
-                                        <Text fw={700} size="sm">
-                                            {t("howItWorksTitle")}
-                                        </Text>
-                                        <List size="sm" spacing="xs">
-                                            {t("howItWorks").map((it) => (
-                                                <List.Item key={it.key}>
-                                                    {it.text}
-                                                </List.Item>
-                                            ))}
-                                        </List>
-                                        <Text c="dimmed" size="sm">
-                                            {t("privacyNote")}
-                                        </Text>
-                                    </Stack>
-                                </Paper>
-                            </Stack>
-                        </Card>
+                {showLanding ? (
+                    <LandingPage t={t} onStart={() => setShowLanding(false)} />
+                ) : (
+                    <Container size="lg" py="xl" dir={isRtl ? "rtl" : "ltr"}>
+                        <Stack gap="md">
+                            <Card withBorder radius="lg" p="lg">
+                                <Stack gap="sm">
+                                    <Title order={4}>{t("aboutTitle")}</Title>
+                                    <Text>{t("aboutLead")}</Text>
+                                    <Paper withBorder radius="md" p="sm">
+                                        <Stack gap={6}>
+                                            <Text fw={700} size="sm">
+                                                {t("howItWorksTitle")}
+                                            </Text>
+                                            <List size="sm" spacing="xs">
+                                                {t("howItWorks").map((it) => (
+                                                    <List.Item key={it.key}>
+                                                        {it.text}
+                                                    </List.Item>
+                                                ))}
+                                            </List>
+                                            <Text c="dimmed" size="sm">
+                                                {t("privacyNote")}
+                                            </Text>
+                                        </Stack>
+                                    </Paper>
+                                </Stack>
+                            </Card>
 
-                        <Card withBorder radius="lg" p="lg">
+                            <Card withBorder radius="lg" p="lg">
                             <Group
                                 justify="space-between"
                                 align="flex-start"
@@ -1410,6 +1485,7 @@ export default function App() {
                         </Card>
                     </Stack>
                 </Container>
+                )}
             </DirectionProvider>
         </MantineProvider>
     );
